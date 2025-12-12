@@ -1,0 +1,5 @@
+file directory: c:/xampp/htdocs
+
+import techtrack_dq.sql
+
+to run the web, enter this in your web browser: localhost/techtrack/TechTrack.html

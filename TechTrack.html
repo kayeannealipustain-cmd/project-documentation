@@ -1,0 +1,1808 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TechTrack</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap");
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: #e0f2fe;
+      }
+      .app-card {
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+          0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+        border: 1px solid #bfdbfe;
+      }
+      .app-card:hover {
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+          0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        transform: translateY(-2px);
+      }
+      .loading-ring {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 2px solid #fff;
+        border-radius: 50%;
+        border-top-color: #1e40af;
+        animation: spin 1s ease-in-out infinite;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      .tab-active {
+        border-color: #3b82f6;
+        color: #3b82f6;
+        background-color: #f0f8ff;
+      }
+      .tab-inactive {
+        border-color: transparent;
+        color: #6b7280;
+        background-color: transparent;
+      }
+      .stat-card {
+        transition: transform 0.2s;
+        cursor: pointer;
+        min-height: 70px;
+      }
+      .stat-card:hover {
+        transform: scale(1.03);
+        opacity: 0.9;
+      }
+      .stat-active {
+        border: 3px solid #f97316;
+      }
+      .home-hero {
+        min-height: 70vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(to bottom right, #2563eb, #1d4ed8);
+        color: white;
+        text-align: center;
+        padding: 40px 20px;
+        border-radius: 1rem;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+      }
+      .home-hero h1 {
+        font-size: clamp(2rem, 5vw, 3.5rem);
+        margin-bottom: 15px;
+        font-weight: 800;
+        line-height: 1.1;
+      }
+      .home-hero p {
+        font-size: clamp(1rem, 2vw, 1.3rem);
+        opacity: 0.9;
+        max-width: 600px;
+        margin: 0 auto;
+      }
+      .home-btn {
+        margin-top: 25px;
+        padding: 14px 40px;
+        background: white;
+        color: #1d4ed8;
+        font-weight: bold;
+        border-radius: 9999px;
+        text-decoration: none;
+        transition: all 0.2s ease-in-out;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        font-size: 1.125rem;
+      }
+      .home-btn:hover {
+        background: #f0f0f0;
+        box-shadow: 0 8px 10px rgba(0, 0, 0, 0.2);
+        transform: translateY(-2px);
+      }
+      .home-section {
+        padding: 40px 20px;
+        text-align: center;
+      }
+      .home-section h2 {
+        font-size: 2.25rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 25px;
+        border-bottom: 3px solid #3b82f6;
+        display: inline-block;
+        padding-bottom: 5px;
+      }
+      .home-features {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 20px;
+        max-width: 1000px;
+        margin: 0 auto;
+      }
+      .feature-box {
+        background: white;
+        padding: 25px;
+        border-radius: 12px;
+        text-align: left;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        border-left: 5px solid #3b82f6;
+        transition: transform 0.2s;
+      }
+      .feature-box:hover {
+        transform: translateY(-5px);
+      }
+      .feature-box h3 {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #1d4ed8;
+        margin-bottom: 10px;
+      }
+      .feature-box p {
+        color: #475569;
+      }
+      .location-block {
+        color: white;
+      }
+    </style>
+  </head>
+  <body class="p-4 md:p-10 min-h-screen flex items-start justify-center">
+    <div id="app-container" class="max-w-5xl w-full">
+      <div id="home-view" class="w-full">
+        <header class="home-hero mb-8">
+          <div>
+            <h1>
+              Techtrack: An Integrated Network Fault Reporting and IT Support
+              Dashboard for Schools
+            </h1>
+            <p>
+              An integrated platform for students, teachers, and staff to report
+              and track network issues easily.
+            </p>
+            <button id="home-get-started-button" class="home-btn">
+              Get Started Now
+            </button>
+          </div>
+        </header>
+
+        <section class="home-section bg-white rounded-2xl app-card mb-8">
+          <h2>Why TechTrack?</h2>
+          <p class="max-w-3xl mx-auto text-lg text-gray-600">
+            TechTrack is designed to streamline the reporting process for all
+            school network faults. It allows students, teachers, and staff to
+            report network issues such as Wi-Fi problems, slow internet, or
+            printer errors. IT staff can track, manage, and resolve these issues
+            efficiently.
+          </p>
+        </section>
+
+        <section class="home-section">
+          <h2>Key Features</h2>
+
+          <div class="home-features">
+            <div class="feature-box">
+              <h3>📌 Simple Login</h3>
+              <p>
+                Easy access for students, teachers, staff, and IT personnel.
+              </p>
+            </div>
+
+            <div class="feature-box">
+              <h3>📝 Report Issues</h3>
+              <p>Submit school network problems quickly using a simple form.</p>
+            </div>
+
+            <div class="feature-box">
+              <h3>📃 Report History</h3>
+              <p>Users can view and track their submitted reports.</p>
+            </div>
+
+            <div class="feature-box">
+              <h3>🛠 IT Admin Panel</h3>
+              <p>Admins can view, update, and manage all submitted reports.</p>
+            </div>
+
+            <div class="feature-box">
+              <h3>📊 Dashboard & Charts</h3>
+              <p>
+                Shows statistics like total reports, resolved issues, and common
+                problems.
+              </p>
+            </div>
+
+            <div class="feature-box">
+              <h3>📱 Fully Responsive</h3>
+              <p>Works smoothly on phones, tablets, and computers.</p>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div
+        id="registration-view"
+        class="max-w-md mx-auto bg-white p-8 rounded-2xl app-card border-l-8 border-blue-600 hidden"
+      >
+        <h2 class="text-3xl font-bold text-gray-700 mb-6 text-center">
+          User Sign-In
+        </h2>
+        <p id="auth-status" class="text-center text-sm mb-4 text-gray-500">
+          Initializing Application...
+        </p>
+
+        <input
+          type="text"
+          id="username-input"
+          placeholder="Enter your Username (e.g., JaneDoe)"
+          maxlength="30"
+          class="w-full p-4 border border-gray-300 rounded-xl focus:ring-blue-500 focus:border-blue-500 mb-4 transition duration-150"
+        />
+
+        <select
+          id="role-select"
+          class="w-full p-4 border border-gray-300 rounded-xl focus:ring-blue-500 focus:border-blue-500 mb-6 transition duration-150"
+          disabled
+        >
+          <option value="" disabled selected>Select your Role</option>
+          <option value="Teacher">Teacher</option>
+          <option value="Student">Student</option>
+          <option value="IT Staff">IT Staff</option>
+        </select>
+
+        <button
+          id="start-reporting-button"
+          class="w-full bg-blue-600 text-white py-4 rounded-xl font-semibold text-lg hover:bg-blue-700 transition duration-150 disabled:opacity-50 shadow-md hover:shadow-lg"
+          disabled
+        >
+          Login / Start Reporting
+        </button>
+        <p
+          id="reg-message-area"
+          class="mt-4 text-sm text-center font-medium"
+        ></p>
+      </div>
+
+      <div id="report-dashboard-view" class="hidden">
+        <h1
+          id="dashboard-main-title"
+          class="text-4xl font-extrabold text-black mb-6 text-center"
+        >
+          TechTrack: Network Fault Reporting Dashboard
+        </h1>
+
+        <div
+          id="user-info-header"
+          class="bg-white p-6 rounded-2xl app-card mb-8 border-l-4 border-blue-600"
+        >
+          <div class="flex justify-between items-center flex-wrap gap-3">
+            <p class="text-xl font-medium text-gray-700">
+              Hello,
+              <span id="current-username" class="text-blue-600 font-extrabold">
+              </span>
+              (<span id="current-role" class="text-purple-600 font-medium">
+              </span
+              >)
+            </p>
+            <div class="flex items-center gap-4 flex-wrap">
+              <button
+                id="logout-button"
+                class="text-sm bg-red-500 text-white py-2 px-4 rounded-lg font-semibold hover:bg-red-600 transition duration-150 shadow-md"
+              >
+                Logout
+              </button>
+              <div class="text-sm text-gray-500">
+                User ID:
+                <span
+                  id="user-id-display"
+                  class="font-mono text-xs bg-gray-100 p-1.5 rounded-lg border"
+                ></span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          id="analytics-section"
+          class="bg-white p-6 rounded-2xl app-card mb-8"
+        >
+          <h2 class="text-3xl font-bold text-gray-700 mb-6 text-center">
+            Help Desk Analytics Summary
+          </h2>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div
+              class="p-4 bg-blue-500 rounded-2xl shadow-xl text-white relative flex flex-col justify-between overflow-hidden"
+            >
+              <div class="absolute top-0 right-0 p-4 text-sm opacity-80">
+                Reports (Last 7 Days)
+              </div>
+              <p class="text-6xl font-extrabold" id="dash-total">0</p>
+              <p class="text-white font-medium text-lg mt-2 mb-4">
+                Total Reports Submitted
+              </p>
+              <div class="h-16 w-full opacity-75">
+                <canvas id="reportsSparkline" width="100" height="40"></canvas>
+              </div>
+            </div>
+
+            <div
+              class="p-6 bg-gray-50 rounded-2xl shadow-md flex flex-col justify-center"
+            >
+              <p class="font-semibold text-gray-700 mb-4 text-center">
+                Status Breakdown
+              </p>
+              <div class="space-y-3">
+                <p
+                  class="flex justify-between items-center px-4 py-1.5 bg-red-100 rounded-lg text-gray-700"
+                >
+                  New
+                  <span class="text-xl font-bold text-red-600" id="dash-pending"
+                    >0</span
+                  >
+                </p>
+                <p
+                  class="flex justify-between items-center px-4 py-1.5 bg-orange-100 rounded-lg text-gray-700"
+                >
+                  Pending
+                  <span
+                    class="text-xl font-bold text-orange-600"
+                    id="dash-status-pending"
+                    >0</span
+                  >
+                </p>
+                <p
+                  class="flex justify-between items-center px-4 py-1.5 bg-green-100 rounded-lg text-gray-700"
+                >
+                  Resolved
+                  <span
+                    class="text-xl font-bold text-green-600"
+                    id="dash-resolved"
+                    >0</span
+                  >
+                </p>
+              </div>
+            </div>
+
+            <div
+              class="p-6 bg-gray-50 rounded-2xl shadow-md flex flex-col justify-center"
+            >
+              <p class="font-semibold text-gray-700 mb-4 text-center">
+                Top Issue Category
+              </p>
+              <div class="text-center">
+                <p
+                  id="dash-top-category"
+                  class="text-2xl font-extrabold text-blue-600 truncate px-2"
+                >
+                  N/A
+                </p>
+                <p class="text-gray-500 text-sm mt-1">
+                  (<span id="dash-top-count">0</span> reports)
+                </p>
+                <div class="mt-4 h-2 bg-gray-200 rounded-full">
+                  <div
+                    id="dash-top-progress-bar"
+                    class="h-2 bg-blue-600 rounded-full transition-all duration-500"
+                    style="width: 0%"
+                  ></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-gray-50 p-6 rounded-2xl shadow-md">
+            <p class="font-semibold text-gray-700 mb-4">
+              Fault Distribution by Location (Visual Map)
+            </p>
+            <div
+              id="location-map"
+              class="flex flex-row overflow-x-auto gap-1 min-h-[100px] items-start content-start"
+            >
+              <p class="text-gray-500 italic p-4" id="location-map-message">
+                Submit reports to see the distribution map.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+          <div id="quick-stats-section" class="lg:col-span-3 order-1">
+            <div class="bg-blue-700 text-white p-6 rounded-2xl app-card">
+              <h3 class="text-xl font-bold mb-4 border-b border-blue-500 pb-2">
+                Network Status Quick Filter
+              </h3>
+              <div class="flex flex-col sm:flex-row gap-4">
+                <div
+                  id="stat-total-card"
+                  data-filter-status="all"
+                  class="flex-1 flex justify-between items-center bg-blue-600 p-3 rounded-xl shadow-md stat-card"
+                >
+                  <span class="font-medium text-sm">Total Reports</span>
+                  <span
+                    id="stat-total"
+                    class="text-2xl font-extrabold text-white"
+                    >0</span
+                  >
+                </div>
+
+                <div
+                  id="stat-unresolved-card"
+                  data-filter-status="New"
+                  class="flex-1 flex justify-between items-center bg-red-600 p-3 rounded-xl shadow-md stat-card"
+                >
+                  <span class="font-medium text-sm">New</span>
+                  <span
+                    id="stat-unresolved"
+                    class="text-2xl font-extrabold text-white"
+                    >0</span
+                  >
+                </div>
+
+                <div
+                  id="stat-pending-card"
+                  data-filter-status="Pending"
+                  class="flex-1 flex justify-between items-center bg-orange-600 p-3 rounded-xl shadow-md stat-card"
+                >
+                  <span class="font-medium text-sm">Pending</span>
+                  <span
+                    id="stat-pending"
+                    class="text-2xl font-extrabold text-white"
+                    >0</span
+                  >
+                </div>
+
+                <div
+                  id="stat-ongoing-card"
+                  data-filter-status="Ongoing"
+                  class="flex-1 flex justify-between items-center bg-blue-600 p-3 rounded-xl shadow-md stat-card hidden"
+                >
+                  <span class="font-medium text-sm">Ongoing</span>
+                  <span
+                    id="stat-ongoing"
+                    class="text-2xl font-extrabold text-white"
+                    >0</span
+                  >
+                </div>
+
+                <div
+                  id="stat-resolved-card"
+                  data-filter-status="Resolved"
+                  class="flex-1 flex justify-between items-center bg-green-600 p-3 rounded-xl shadow-md stat-card"
+                >
+                  <span class="font-medium text-sm">Resolved</span>
+                  <span
+                    id="stat-resolved"
+                    class="text-2xl font-extrabold text-white"
+                    >0</span
+                  >
+                </div>
+              </div>
+            </div>
+
+            <button
+              id="reset-data-button"
+              class="mt-4 w-full bg-yellow-500 text-gray-800 py-3 rounded-xl font-semibold hover:bg-yellow-600 transition duration-150 shadow-md"
+            >
+              ⚠️ Reset All Data (Clear Users & Reports)
+            </button>
+          </div>
+
+          <div
+            id="submission-form-section"
+            class="bg-white p-6 rounded-2xl app-card lg:col-span-3 order-2"
+          >
+            <h2 class="text-2xl font-bold text-gray-700 mb-4 border-b pb-2">
+              Submit New Network Report
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <select
+                id="category-select"
+                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-150"
+              >
+                <option value="" disabled selected>
+                  Select Issue Category *
+                </option>
+              </select>
+
+              <select
+                id="location-select"
+                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-150"
+              >
+                <option value="" disabled selected>
+                  Select Issue Location *
+                </option>
+              </select>
+            </div>
+
+            <textarea
+              id="report-text"
+              placeholder="Describe the network problem in detail. Include specific room/building details."
+              rows="4"
+              class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 mb-4 transition duration-150"
+            ></textarea>
+
+            <div class="mb-4">
+              <label
+                for="report-photo"
+                class="block text-sm font-medium text-gray-700 mb-2"
+                >Upload Photo of Issue (Optional, Max 2MB):</label
+              >
+              <input
+                type="file"
+                id="report-photo"
+                accept="image/jpeg, image/png"
+                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-150 bg-white"
+              />
+            </div>
+
+            <button
+              id="submit-button"
+              class="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition duration-150 disabled:opacity-50 shadow-md"
+            >
+              Submit Fault Report
+            </button>
+            <p
+              id="message-area"
+              class="mt-3 text-sm text-center font-medium"
+            ></p>
+          </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-2xl app-card">
+          <div class="flex border-b border-gray-200 mb-4" id="tabs-container">
+            <button
+              id="tab-global"
+              data-tab-name="global"
+              class="py-2 px-4 text-sm font-semibold border-b-2 tab-active transition duration-150"
+            >
+              Global Reports Feed
+            </button>
+            <button
+              id="tab-my-reports"
+              data-tab-name="my"
+              class="py-2 px-4 text-sm font-semibold border-b-2 tab-inactive transition duration-150"
+            >
+              My Reports (Private)
+            </button>
+          </div>
+
+          <h2
+            id="current-reports-title"
+            class="text-xl font-bold text-gray-700 mb-4"
+          >
+            All Active Reports (Real-Time)
+          </h2>
+          <p
+            id="filter-status-message"
+            class="hidden text-sm text-orange-600 italic mb-4"
+          >
+            Showing:
+            <span id="active-filter-text" class="font-bold"></span>
+          </p>
+
+          <div id="reports-list" class="space-y-4">
+            <p
+              id="loading-indicator"
+              class="text-center text-gray-500 italic flex justify-center items-center p-4"
+            >
+              <span class="loading-ring mr-2"></span> Loading reports...
+            </p>
+          </div>
+          <p
+            id="no-reports-message"
+            class="hidden text-center text-gray-500 italic mt-4 p-4"
+          >
+            No reports found in this feed.
+          </p>
+        </div>
+      </div>
+
+      <div
+        id="confirmation-modal"
+        class="fixed inset-0 bg-gray-900 bg-opacity-50 hidden items-center justify-center z-50 backdrop-blur-sm"
+      >
+        <div
+          class="bg-white rounded-2xl p-6 w-96 shadow-2xl transform transition-all scale-100"
+        >
+          <h3 class="text-xl font-bold text-gray-800 mb-4">
+            Confirm Status Change
+          </h3>
+          <p id="modal-message" class="text-gray-600 mb-6">Are you sure?</p>
+          <div class="flex justify-end space-x-3">
+            <button
+              id="modal-cancel-btn"
+              class="px-4 py-2 rounded-lg text-gray-700 bg-gray-200 hover:bg-gray-300 font-medium transition"
+            >
+              Cancel
+            </button>
+            <button
+              id="modal-confirm-btn"
+              class="px-4 py-2 rounded-lg text-white bg-blue-600 hover:bg-blue-700 font-bold shadow-md transition"
+            >
+              Confirm
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script type="module">
+      let userId = null;
+      let currentUsername = null;
+      let currentRole = null;
+      let isAuthReady = false;
+      let currentTab = "global";
+      let currentFilter = "all";
+      let unsubscribeReports = null;
+      let pollingIntervalId = null;
+
+      let pendingStatusChange = {
+        reportId: null,
+        newStatus: null,
+        oldStatus: null,
+        selectElement: null,
+      };
+
+      let reportsSparklineInstance = null;
+
+      const ISSUE_CATEGORIES = [
+        "Wi-Fi Issues",
+        "LAN/Wired Network Issues",
+        "Printer/Device Connectivity",
+        "Server/Login Problems",
+        "Bandwidth/Congestion Issues",
+      ];
+
+      const ISSUE_LOCATIONS = [
+        "Classroom",
+        "Faculty Office",
+        "Dean's Office",
+        "Library",
+        "Cafeteria/Common Area",
+        "Outdoor/External",
+      ];
+
+      const LOCATION_COLORS = {
+        Classroom: "bg-red-700",
+        "Faculty Office": "bg-green-700",
+        "Dean's Office": "bg-purple-700",
+        Library: "bg-yellow-700",
+        "Cafeteria/Common Area": "bg-pink-700",
+        "Outdoor/External": "bg-cyan-700",
+        "N/A": "bg-gray-700",
+      };
+
+      // --- [START REPLACEMENT FOR LocalDB] ---
+      /**
+       * ApiClient: Replaces LocalDB functionality with asynchronous calls
+       * to a presumed PHP/MySQL backend API (e.g., running on XAMPP).
+       * NOTE: The backend API files (auth.php, reports.php, admin.php) must be created separately
+       * by the user in their XAMPP htdocs folder, under a directory like 'techtrack_api'.
+       */
+      const ApiClient = {
+        BASE_URL: "http://localhost/techtrack_api", // Change this URL if API is elsewhere
+
+        // Simulates LocalDB.getUserKey
+        getUserKey: (username, role) => `${username.trim()}_${role.trim()}`,
+
+        // Replaces LocalDB.loadUserProfile and LocalDB.saveUserProfile logic (auth/registration)
+        loadOrCreateProfile: async (key, username, role) => {
+          const response = await fetch(`${ApiClient.BASE_URL}/auth.php`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              userKey: key,
+              username: username,
+              role: role,
+            }),
+          });
+          if (!response.ok) {
+            const errorData = await response
+              .json()
+              .catch(() => ({ error: response.statusText }));
+            throw new Error(
+              `Auth API failed (${response.status}): ${
+                errorData.error || response.statusText
+              }`
+            );
+          }
+          const result = await response.json();
+          // Expected PHP response structure: { exists: boolean, data: { id, username, role } }
+          return result;
+        },
+
+        // Replaces LocalDB.addReport
+        addReport: async (data) => {
+          const response = await fetch(`${ApiClient.BASE_URL}/reports.php`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+          });
+          if (!response.ok) {
+            const errorData = await response
+              .json()
+              .catch(() => ({ error: response.statusText }));
+            throw new Error(
+              `Report submission failed (${response.status}): ${
+                errorData.error || response.statusText
+              }`
+            );
+          }
+          return response.json();
+        },
+
+        // Replaces LocalDB.updateReportStatus
+        updateReportStatus: async (reportId, newStatus) => {
+          const response = await fetch(`${ApiClient.BASE_URL}/reports.php`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id: reportId, status: newStatus }),
+          });
+          if (!response.ok) {
+            const errorData = await response
+              .json()
+              .catch(() => ({ error: response.statusText }));
+            throw new Error(
+              `Status update failed (${response.status}): ${
+                errorData.error || response.statusText
+              }`
+            );
+          }
+          return response.json();
+        },
+
+        // Replaces LocalDB.resetAllData
+        resetAllData: async () => {
+          const response = await fetch(`${ApiClient.BASE_URL}/admin.php`, {
+            method: "DELETE",
+          });
+          if (!response.ok) {
+            const errorData = await response
+              .json()
+              .catch(() => ({ error: response.statusText }));
+            throw new Error(
+              `Data reset failed (${response.status}): ${
+                errorData.error || response.statusText
+              }`
+            );
+          }
+          return response.json();
+        },
+
+        /**
+         * Fetches reports based on the current tab and filter.
+         * @param {string} tab - 'global' or 'my'
+         * @param {string} userId - ID of the logged-in user
+         * @param {string} filterStatus - 'all', 'New', 'Pending', 'Resolved'
+         * @param {boolean} fetchAll - Whether to fetch all reports for stats (IT Staff only)
+         * @returns {Promise<{filteredReports: Array, allReports: Array}>}
+         */
+        fetchReports: async (tab, userId, filterStatus, fetchAll = false) => {
+          const params = new URLSearchParams();
+          params.append("tab", tab);
+          params.append("userId", userId);
+          params.append("filter", filterStatus);
+          params.append("fetchAll", fetchAll ? "true" : "false");
+
+          const response = await fetch(
+            `${ApiClient.BASE_URL}/reports.php?${params.toString()}`
+          );
+          if (!response.ok) {
+            const errorData = await response
+              .json()
+              .catch(() => ({ error: response.statusText }));
+            throw new Error(
+              `Failed to fetch reports (${response.status}): ${
+                errorData.error || response.statusText
+              }`
+            );
+          }
+          const result = await response.json();
+
+          // Expected PHP response structure: { filtered: [...], all: [...] }
+          return {
+            filteredReports: result.filtered || [],
+            allReports: result.all || [],
+          };
+        },
+      };
+      // --- [END REPLACEMENT FOR LocalDB] ---
+
+      const homeView = document.getElementById("home-view");
+      const homeGetStartedButton = document.getElementById(
+        "home-get-started-button"
+      );
+      const registrationView = document.getElementById("registration-view");
+      const reportDashboardView = document.getElementById(
+        "report-dashboard-view"
+      );
+      const usernameInput = document.getElementById("username-input");
+      const roleSelect = document.getElementById("role-select");
+      const startReportingButton = document.getElementById(
+        "start-reporting-button"
+      );
+      const authStatus = document.getElementById("auth-status");
+      const regMessageArea = document.getElementById("reg-message-area");
+      const logoutButton = document.getElementById("logout-button");
+      const resetDataButton = document.getElementById("reset-data-button");
+      const userIdDisplay = document.getElementById("user-id-display");
+      const currentUsernameDisplay =
+        document.getElementById("current-username");
+      const currentRoleDisplay = document.getElementById("current-role");
+      const dashboardMainTitle = document.getElementById(
+        "dashboard-main-title"
+      );
+      const submitButton = document.getElementById("submit-button");
+      const messageArea = document.getElementById("message-area");
+      const reportsList = document.getElementById("reports-list");
+      const loadingIndicator = document.getElementById("loading-indicator");
+      const noReportsMessage = document.getElementById("no-reports-message");
+      const reportTextarea = document.getElementById("report-text");
+      const categorySelect = document.getElementById("category-select");
+      const locationSelect = document.getElementById("location-select");
+
+      const reportPhotoInput = document.getElementById("report-photo");
+
+      const confirmationModal = document.getElementById("confirmation-modal");
+      const modalMessage = document.getElementById("modal-message");
+      const modalConfirmBtn = document.getElementById("modal-confirm-btn");
+      const modalCancelBtn = document.getElementById("modal-cancel-btn");
+
+      const analyticsSection = document.getElementById("analytics-section");
+      const quickStatsSection = document.getElementById("quick-stats-section");
+      const formSection = document.getElementById("submission-form-section");
+
+      const statTotalCard = document.getElementById("stat-total-card");
+      const statUnresolvedCard = document.getElementById(
+        "stat-unresolved-card"
+      );
+      const statPendingCard = document.getElementById("stat-pending-card");
+      const statOngoingCard = document.getElementById("stat-ongoing-card");
+      const statResolvedCard = document.getElementById("stat-resolved-card");
+
+      const statTotal = document.getElementById("stat-total");
+      const statUnresolved = document.getElementById("stat-unresolved");
+      const statPending = document.getElementById("stat-pending");
+      const statOngoing = document.getElementById("stat-ongoing");
+      const statResolved = document.getElementById("stat-resolved");
+
+      const tabGlobal = document.getElementById("tab-global");
+      const tabMyReports = document.getElementById("tab-my-reports");
+      const currentReportsTitle = document.getElementById(
+        "current-reports-title"
+      );
+      const filterStatusMessage = document.getElementById(
+        "filter-status-message"
+      );
+      const activeFilterText = document.getElementById("active-filter-text");
+
+      const dashTotal = document.getElementById("dash-total");
+      const dashPending = document.getElementById("dash-pending");
+      const dashStatusPending = document.getElementById("dash-status-pending");
+      const dashOngoing = document.getElementById("dash-ongoing");
+      const dashResolved = document.getElementById("dash-resolved");
+      const locationMap = document.getElementById("location-map");
+      const locationMapMessage = document.getElementById(
+        "location-map-message"
+      );
+      const dashTopCategory = document.getElementById("dash-top-category");
+      const dashTopCount = document.getElementById("dash-top-count");
+      const dashTopProgressBar = document.getElementById(
+        "dash-top-progress-bar"
+      );
+
+      const switchView = (viewName) => {
+        homeView.classList.add("hidden");
+        registrationView.classList.add("hidden");
+        reportDashboardView.classList.add("hidden");
+
+        if (viewName === "home") {
+          homeView.classList.remove("hidden");
+
+          document.body.classList.remove(
+            "flex",
+            "items-start",
+            "justify-center"
+          );
+          document.body.classList.add("flex", "items-start", "justify-center");
+
+          userId = null;
+          currentUsername = null;
+          currentRole = null;
+          currentFilter = "all";
+
+          usernameInput.disabled = false;
+          roleSelect.disabled = false;
+          startReportingButton.disabled = false;
+
+          authStatus.textContent = "API Mode Active. Please sign in.";
+
+          if (unsubscribeReports) {
+            unsubscribeReports();
+            unsubscribeReports = null;
+          }
+        } else if (viewName === "registration") {
+          registrationView.classList.remove("hidden");
+
+          document.body.classList.remove("items-start");
+          document.body.classList.add("items-center");
+
+          usernameInput.value = "";
+          roleSelect.value = "";
+          regMessageArea.textContent = "";
+
+          userId = null;
+          currentUsername = null;
+          currentRole = null;
+          currentFilter = "all";
+
+          usernameInput.disabled = false;
+          roleSelect.disabled = false;
+          startReportingButton.disabled = false;
+
+          if (unsubscribeReports) {
+            unsubscribeReports();
+            unsubscribeReports = null;
+          }
+        } else if (viewName === "dashboard") {
+          reportDashboardView.classList.remove("hidden");
+
+          document.body.classList.remove("items-start");
+          document.body.classList.add("items-center");
+
+          currentUsernameDisplay.textContent = currentUsername;
+          currentRoleDisplay.textContent = currentRole;
+          userIdDisplay.textContent = userId;
+
+          if (isAuthReady) {
+            updateUIForRole();
+            setupReportListener();
+          }
+        }
+      };
+
+      const updateUIForRole = () => {
+        if (currentRole === "IT Staff") {
+          analyticsSection.classList.remove("hidden");
+          quickStatsSection.classList.remove("hidden");
+          tabGlobal.classList.remove("hidden");
+          tabMyReports.classList.add("hidden"); // Added: Hide My Reports for IT Staff
+
+          dashboardMainTitle.classList.remove("hidden");
+
+          formSection.classList.add("hidden");
+
+          formSection.classList.add("lg:col-span-3");
+          formSection.classList.remove("lg:col-span-2");
+
+          setTab("global");
+
+          statOngoingCard.classList.add("hidden");
+        } else {
+          analyticsSection.classList.add("hidden");
+          quickStatsSection.classList.add("hidden");
+
+          dashboardMainTitle.classList.remove("hidden");
+          tabGlobal.classList.add("hidden");
+          tabMyReports.classList.remove("hidden"); // Added: Show My Reports for others (Student/Teacher)
+
+          formSection.classList.remove("hidden");
+          formSection.classList.remove("lg:col-span-2");
+          formSection.classList.add("lg:col-span-3");
+
+          statOngoingCard.classList.remove("hidden");
+
+          setTab("my");
+        }
+      };
+
+      const getDayOfWeek = (timestamp) => {
+        const date = new Date(timestamp);
+        return date.toLocaleDateString("en-US", { weekday: "short" });
+      };
+
+      const initializeCharts = () => {
+        const reportsCtx = document
+          .getElementById("reportsSparkline")
+          .getContext("2d");
+
+        reportsSparklineInstance = new Chart(reportsCtx, {
+          type: "line",
+          data: {
+            labels: [],
+            datasets: [
+              {
+                label: "Reports",
+                data: [],
+                fill: true,
+                tension: 0.2,
+                borderColor: "rgba(255, 255, 255, 0.8)",
+                backgroundColor: "rgba(255, 255, 255, 0.3)",
+                pointRadius: 2,
+                pointBackgroundColor: "white",
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false },
+              tooltip: { enabled: false },
+            },
+            layout: { padding: { left: 0, right: 0, top: 0, bottom: 0 } },
+            scales: {
+              x: { display: false },
+              y: { display: false, beginAtZero: true },
+            },
+            elements: {
+              line: { borderWidth: 1 },
+            },
+          },
+        });
+      };
+
+      const updateDashboardVisuals = (reports) => {
+        if (currentRole !== "IT Staff") return;
+
+        const totalReports = reports.length;
+
+        const locationCounts = reports.reduce((acc, report) => {
+          const location = report.location || "N/A";
+          acc[location] = (acc[location] || 0) + 1;
+          return acc;
+        }, {});
+
+        locationMap.innerHTML = "";
+        if (totalReports === 0) {
+          locationMap.appendChild(locationMapMessage);
+          locationMapMessage.classList.remove("hidden");
+        } else {
+          locationMapMessage.classList.add("hidden");
+
+          const sortedLocations = Object.entries(locationCounts).sort(
+            (a, b) => b[1] - a[1]
+          );
+
+          sortedLocations.forEach(([location, count]) => {
+            const percentage = (count / totalReports) * 100;
+            const block = document.createElement("div");
+
+            const sizeBasis = Math.max(
+              100 / sortedLocations.length,
+              percentage
+            );
+
+            const colorClass =
+              LOCATION_COLORS[location] || LOCATION_COLORS["N/A"];
+            block.className = `location-block flex-grow-0 flex-shrink-0 p-2 text-xs md:text-sm shadow-inner cursor-pointer hover:scale-[1.005] transition-transform duration-200 
+                                ${colorClass} text-white flex flex-col justify-center items-center text-center whitespace-nowrap`;
+
+            block.style.width = `${percentage}%`;
+            block.style.minWidth = "120px";
+            block.style.minHeight = "80px";
+
+            block.innerHTML = `
+                <span class="block font-bold">${location}</span>
+                <span class="block text-xs font-medium mt-1">${count} Reports (${percentage.toFixed(
+              0
+            )}%)</span>
+            `;
+            locationMap.appendChild(block);
+          });
+        }
+
+        const last7DaysLabels = [];
+        const dayCounts = {};
+        for (let i = 6; i >= 0; i--) {
+          const d = new Date();
+          d.setDate(d.getDate() - i);
+          const label = getDayOfWeek(d.getTime());
+          last7DaysLabels.push(label);
+          dayCounts[label] = 0;
+        }
+
+        reports.forEach((report) => {
+          // Reports from API will have a simple timestamp (milliseconds)
+          const timestamp = report.timestamp;
+          if (timestamp) {
+            const date = new Date(timestamp);
+
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const sevenDaysAgo = new Date(today);
+            sevenDaysAgo.setDate(today.getDate() - 6);
+
+            if (date >= sevenDaysAgo) {
+              const reportDay = getDayOfWeek(timestamp);
+              if (dayCounts.hasOwnProperty(reportDay)) {
+                dayCounts[reportDay]++;
+              }
+            }
+          }
+        });
+
+        const timeSeriesData = last7DaysLabels.map((label) => dayCounts[label]);
+
+        reportsSparklineInstance.data.labels = last7DaysLabels;
+        reportsSparklineInstance.data.datasets[0].data = timeSeriesData;
+        reportsSparklineInstance.update();
+
+        const categoryCounts = reports.reduce((acc, report) => {
+          const category = report.category || "Unspecified";
+          acc[category] = (acc[category] || 0) + 1;
+          return acc;
+        }, {});
+
+        const topCategory = Object.entries(categoryCounts).sort(
+          (a, b) => b[1] - a[1]
+        )[0];
+
+        if (topCategory && totalReports > 0) {
+          const [name, count] = topCategory;
+          const topPercentage = (count / totalReports) * 100;
+          dashTopCategory.textContent = name;
+          dashTopCount.textContent = count;
+          dashTopProgressBar.style.width = `${topPercentage.toFixed(0)}%`;
+        } else {
+          dashTopCategory.textContent = "N/A";
+          dashTopCount.textContent = "0";
+          dashTopProgressBar.style.width = "0%";
+        }
+      };
+
+      const fileToBase64 = (file) => {
+        return new Promise((resolve, reject) => {
+          if (!file) {
+            return resolve(null);
+          }
+          const reader = new FileReader();
+          reader.readAsDataURL(file);
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = (error) => reject(error);
+        });
+      };
+
+      const initApp = async () => {
+        populateDropdowns();
+        initializeCharts();
+        authStatus.textContent = "Connecting to MySQL API...";
+        isAuthReady = true;
+
+        usernameInput.disabled = false;
+        roleSelect.disabled = false;
+        startReportingButton.disabled = false;
+
+        switchView("home");
+      };
+
+      /**
+       * New implementation uses ApiClient to handle both loading and creating the profile
+       * on the server side in a single call.
+       */
+      const loadOrCreateProfile = async (userKey, username, role) => {
+        const result = await ApiClient.loadOrCreateProfile(
+          userKey,
+          username,
+          role
+        );
+
+        if (result && result.data) {
+          // The API response contains the final user data
+          const data = result.data;
+          currentUsername = data.username;
+          currentRole = data.role || "Unspecified";
+          // Use the ID returned by the server, which should match the userKey in this simple model
+          userId = data.id || userKey;
+
+          if (result.exists) {
+            regMessageArea.textContent = `Welcome back, ${currentUsername}!`;
+          } else {
+            regMessageArea.textContent = `Registration complete. Redirecting to dashboard...`;
+          }
+          regMessageArea.className =
+            "mt-4 text-sm text-center font-medium text-green-600";
+
+          setTimeout(() => switchView("dashboard"), 1000);
+        } else {
+          throw new Error("Invalid response from authentication API.");
+        }
+      };
+
+      const handleRegistration = async () => {
+        const username = usernameInput.value.trim();
+        const role = roleSelect.value.trim();
+
+        if (!username || !role) {
+          regMessageArea.textContent =
+            "Please provide a username and select your role.";
+          regMessageArea.className =
+            "mt-4 text-sm text-center font-medium text-red-600";
+          return;
+        }
+
+        startReportingButton.disabled = true;
+        startReportingButton.innerHTML = `<span class="loading-ring"></span> Logging in...`;
+
+        try {
+          const userKey = ApiClient.getUserKey(username, role); // Use ApiClient's key generator
+          await loadOrCreateProfile(userKey, username, role);
+        } catch (error) {
+          console.error("Error logging in/registering:", error);
+          regMessageArea.textContent = `Login Error: ${error.message}`;
+          regMessageArea.className =
+            "mt-4 text-sm text-center font-medium text-red-600";
+        } finally {
+          startReportingButton.disabled = false;
+          startReportingButton.textContent = "Login / Start Reporting";
+        }
+      };
+
+      const handleLogout = async () => {
+        switchView("home");
+      };
+
+      const handleDataReset = async () => {
+        // ADD ASYNC
+
+        if (
+          !confirm(
+            "Are you sure you want to reset ALL stored reports and user profiles? This action cannot be undone."
+          )
+        ) {
+          console.log("Data reset cancelled by user.");
+          return;
+        }
+
+        try {
+          await ApiClient.resetAllData(); // CALL API CLIENT
+          console.log(
+            "All application data has been cleared (API call initiated)."
+          );
+          switchView("home");
+        } catch (error) {
+          console.error("Error during data reset:", error);
+          alert(`Error resetting data: ${error.message}`);
+        }
+      };
+
+      const updateReportStatus = async (reportId, newStatus) => {
+        if (currentRole !== "IT Staff") return;
+        try {
+          // Replaced LocalDB with ApiClient
+          await ApiClient.updateReportStatus(reportId, newStatus);
+          // The next poll in setupReportListener will pick up the change
+        } catch (error) {
+          console.error("Error updating report status:", error);
+          alert(`Failed to update status: ${error.message}`);
+          setupReportListener(); // Refresh the list to show old status if update failed
+        }
+      };
+
+      /**
+       * Updated to accept the full set of reports for statistics.
+       * @param {Array} allReports - The unfiltered list of all reports for analytics.
+       */
+      const updateDashboardStats = (allReports) => {
+        const globalReports = allReports;
+        const total = globalReports.length;
+
+        const newReports = globalReports.filter(
+          (r) => r.status === "New" || !r.status
+        ).length;
+        const pendingReports = globalReports.filter(
+          (r) => r.status === "Pending"
+        ).length;
+
+        const ongoingReports = globalReports.filter(
+          (r) => r.status === "Ongoing" || r.status === "In Progress"
+        ).length;
+        const resolvedReports = globalReports.filter(
+          (r) => r.status === "Resolved"
+        ).length;
+
+        statTotal.textContent = total;
+        statUnresolved.textContent = newReports;
+        statPending.textContent = pendingReports;
+        statResolved.textContent = resolvedReports;
+
+        dashTotal.textContent = total;
+        dashPending.textContent = newReports;
+        dashStatusPending.textContent = pendingReports;
+        dashResolved.textContent = resolvedReports;
+
+        updateDashboardVisuals(globalReports);
+
+        if (newReports > 0) {
+          statUnresolvedCard.classList.add("animate-pulse");
+        } else {
+          statUnresolvedCard.classList.remove("animate-pulse");
+        }
+      };
+
+      const updateStatActiveVisuals = (activeFilter) => {
+        [
+          statTotalCard,
+          statUnresolvedCard,
+          statPendingCard,
+          statResolvedCard,
+        ].forEach((card) => {
+          card.classList.remove("stat-active");
+        });
+
+        if (currentTab === "global") {
+          if (activeFilter === "all")
+            statTotalCard.classList.add("stat-active");
+          if (activeFilter === "New")
+            statUnresolvedCard.classList.add("stat-active");
+          if (activeFilter === "Pending")
+            statPendingCard.classList.add("stat-active");
+
+          if (activeFilter === "Resolved")
+            statResolvedCard.classList.add("stat-active");
+        }
+      };
+
+      const handleStatClick = (event) => {
+        if (currentTab !== "global") return;
+
+        const card = event.target.closest(".stat-card");
+        if (!card) return;
+
+        const filter = card.dataset.filterStatus;
+
+        if (
+          currentRole === "IT Staff" &&
+          (filter === "Ongoing" || filter === "In Progress")
+        )
+          return;
+
+        if (currentFilter === filter) {
+          currentFilter = "all";
+        } else {
+          currentFilter = filter;
+        }
+
+        setupReportListener();
+      };
+
+      const renderReports = (reports) => {
+        // This function no longer calls updateDashboardStats directly,
+        // it just focuses on rendering the list.
+        reportsList.innerHTML = "";
+        loadingIndicator.classList.add("hidden");
+
+        const isFiltered = currentTab === "global" && currentFilter !== "all";
+        updateStatActiveVisuals(
+          isFiltered
+            ? currentFilter
+            : currentTab === "global"
+            ? currentFilter
+            : null
+        );
+
+        if (isFiltered) {
+          filterStatusMessage.classList.remove("hidden");
+          activeFilterText.textContent = `${currentFilter} Reports`;
+        } else if (currentTab === "global") {
+          filterStatusMessage.classList.add("hidden");
+        }
+
+        if (reports.length === 0) {
+          noReportsMessage.classList.remove("hidden");
+          noReportsMessage.textContent =
+            currentTab === "global"
+              ? isFiltered
+                ? `No ${currentFilter} reports found in the global feed.`
+                : "No reports found in the global feed."
+              : "You have not submitted any reports yet.";
+          return;
+        } else {
+          noReportsMessage.classList.add("hidden");
+        }
+
+        reports.sort(
+          (a, b) =>
+            // Reports from API will have a simple timestamp (milliseconds)
+            (b.timestamp || 0) - (a.timestamp || 0)
+        );
+
+        reports.forEach((report) => {
+          const reportElement = document.createElement("div");
+          reportElement.className =
+            "p-4 bg-gray-50 border-l-4 rounded-lg break-words shadow-sm hover:shadow-md transition-shadow";
+
+          const status = report.status || "New";
+          let statusClass = "";
+          let buttonHtml = "";
+          let borderColor = "border-blue-500";
+
+          const IT_STAFF_STATUSES = ["New", "Pending", "Resolved"];
+
+          if (status === "Resolved") {
+            statusClass = "bg-green-100 text-green-700";
+            borderColor = "border-green-500";
+          } else if (status === "New") {
+            statusClass = "bg-red-100 text-red-700";
+            borderColor = "border-red-600";
+          } else if (status === "Pending") {
+            statusClass = "bg-orange-100 text-orange-700";
+            borderColor = "border-orange-500";
+          } else if (status === "Ongoing" || status === "In Progress") {
+            statusClass = "bg-blue-100 text-blue-700";
+            borderColor = "border-blue-500";
+          }
+
+          reportElement.classList.add(borderColor);
+
+          if (currentRole === "IT Staff") {
+            let optionsHtml = IT_STAFF_STATUSES.map((s) => {
+              const isSelected = s === status;
+              return `<option value="${s}" ${
+                isSelected ? "selected" : ""
+              }>${s}</option>`;
+            }).join("");
+
+            if (status === "Ongoing" || status === "In Progress") {
+              optionsHtml = IT_STAFF_STATUSES.map((s) => {
+                const isSelected = s === "Pending";
+                return `<option value="${s}" ${
+                  isSelected ? "selected" : ""
+                }>${s}</option>`;
+              }).join("");
+            }
+
+            buttonHtml = `
+              <select data-report-id="${report.id}" class="status-select text-xs border border-gray-300 rounded p-1 focus:ring-blue-500 focus:border-blue-500">
+                ${optionsHtml}
+              </select>
+            `;
+          }
+
+          const date = report.timestamp
+            ? new Date(report.timestamp) // Use simple timestamp (milliseconds)
+            : new Date();
+          const formattedDate = date.toLocaleString();
+
+          const roleText = report.submittedByRole
+            ? `(${report.submittedByRole})`
+            : "";
+
+          let imageHtml = "";
+          if (report.photoBase64) {
+            imageHtml = `
+                  <div class="mb-3 mt-2 border border-gray-300 rounded-lg overflow-hidden">
+                      <p class="text-xs font-semibold text-gray-700 bg-gray-100 px-3 py-1">Attached Photo:</p>
+                      <img 
+                          src="${report.photoBase64}" 
+                          alt="Issue Photo" 
+                          class="w-full h-auto max-h-64 object-contain cursor-pointer" 
+                          onclick="window.open(this.src)" 
+                          title="Click to view full size"
+                      />
+                  </div>
+              `;
+          }
+
+          reportElement.innerHTML = `
+            <div class="flex justify-between items-start mb-2">
+              <span class="inline-block px-3 py-1 text-xs font-semibold rounded-full ${statusClass} tracking-wide">
+                ${status.toUpperCase()}
+              </span>
+              <div>
+                ${buttonHtml}
+              </div>
+            </div>
+
+            <p class="text-sm font-bold text-gray-700 mb-1">
+              Report ID: <span class="text-black font-extrabold mr-3">#${
+                report.id
+              }</span> Category: <span class="text-blue-600">${
+            report.category || "N/A"
+          }</span>
+            </p>
+            <p class="text-sm font-bold text-gray-700 mb-2 border-b border-gray-200 pb-1">
+              Location: <span class="text-purple-600">${
+                report.location || "N/A"
+              }</span>
+            </p>
+
+            <p class="text-sm text-gray-800 whitespace-pre-wrap mb-3">${
+              report.content
+            }</p>
+            
+            ${imageHtml} <p class="text-xs text-gray-500 font-medium flex justify-between items-center pt-2 border-t border-gray-200">
+              <span>Submitted by: <span class="text-gray-700 font-semibold">${
+                report.submittedBy || "N/A"
+              }</span> ${roleText}</span>
+              <span class="text-right">${formattedDate}</span>
+            </p>
+          `;
+          reportsList.appendChild(reportElement);
+        });
+      };
+
+      /**
+       * Rewritten to use polling via ApiClient.fetchReports instead of local listeners.
+       */
+      const setupReportListener = () => {
+        if (!isAuthReady || !userId) {
+          loadingIndicator.classList.add("hidden");
+          noReportsMessage.classList.remove("hidden");
+          noReportsMessage.textContent = "Please log in to see reports.";
+          return;
+        }
+
+        // 1. Clear existing timer
+        if (pollingIntervalId) {
+          clearInterval(pollingIntervalId);
+          pollingIntervalId = null;
+        }
+
+        reportsList.innerHTML = "";
+        loadingIndicator.classList.remove("hidden");
+        noReportsMessage.classList.add("hidden");
+
+        if (currentTab === "global") {
+          if (currentFilter === "all") {
+            currentReportsTitle.textContent = "All Active Reports (Real-Time)";
+          } else {
+            currentReportsTitle.textContent = `Global Reports Feed (Filtered by ${currentFilter})`;
+          }
+        } else {
+          currentReportsTitle.textContent = "Your Personal Reports (Private)";
+          filterStatusMessage.classList.add("hidden");
+        }
+
+        const fetchAndRender = async () => {
+          try {
+            // IT Staff needs all reports for analytics, others only need their filtered list
+            const fetchAllForStats = currentRole === "IT Staff";
+
+            // 2. Fetch data from API
+            const data = await ApiClient.fetchReports(
+              currentTab,
+              userId,
+              currentFilter,
+              fetchAllForStats
+            );
+
+            // 3. Update Stats (only if IT Staff)
+            if (fetchAllForStats) {
+              updateDashboardStats(data.allReports);
+            }
+
+            // 4. Render the filtered list
+            renderReports(data.filteredReports);
+          } catch (error) {
+            console.error("Polling error:", error);
+            loadingIndicator.classList.add("hidden");
+            noReportsMessage.classList.remove("hidden");
+            noReportsMessage.textContent = `Error loading reports from server: ${error.message}. Check XAMPP/API status.`;
+          }
+        };
+
+        // Start the first fetch immediately
+        fetchAndRender();
+
+        // 5. Set up the polling interval (e.g., every 5 seconds)
+        const POLL_INTERVAL_MS = 5000;
+        pollingIntervalId = setInterval(fetchAndRender, POLL_INTERVAL_MS);
+
+        // 6. Define the cleanup function
+        unsubscribeReports = () => {
+          clearInterval(pollingIntervalId);
+          pollingIntervalId = null;
+        };
+      };
+
+      const setTab = (tab) => {
+        if (currentTab === tab) return;
+
+        currentTab = tab;
+        currentFilter = "all";
+
+        tabGlobal.classList.remove("tab-active", "tab-inactive");
+        tabMyReports.classList.remove("tab-active", "tab-inactive");
+
+        if (tab === "global") {
+          tabGlobal.classList.add("tab-active");
+          tabMyReports.classList.add("tab-inactive");
+        } else {
+          tabGlobal.classList.add("tab-inactive");
+          tabMyReports.classList.add("tab-active");
+        }
+
+        setupReportListener();
+      };
+
+      const addReport = async () => {
+        const reportContent = reportTextarea.value.trim();
+        const category = categorySelect.value;
+        const location = locationSelect.value;
+        const photoFile = reportPhotoInput.files[0];
+        const MB = 1024 * 1024;
+        const MAX_FILE_SIZE = 2 * MB; // 2MB
+
+        if (!reportContent || !category || !location) {
+          messageArea.textContent =
+            "Please describe the problem, select a category, AND select a location.";
+          messageArea.className =
+            "mt-3 text-sm text-center font-medium text-red-600";
+          return;
+        }
+
+        if (photoFile && photoFile.size > MAX_FILE_SIZE) {
+          messageArea.textContent = `Error: Photo size exceeds the 500KB limit. Current size: ${(
+            photoFile.size / 1024
+          ).toFixed(2)} KB.`;
+          messageArea.className =
+            "mt-3 text-sm text-center font-medium text-red-600";
+          return;
+        }
+
+        if (!isAuthReady || !userId || !currentUsername) {
+          messageArea.textContent =
+            "User not authenticated or profile incomplete. Please login.";
+          messageArea.className =
+            "mt-3 text-sm text-center font-medium text-yellow-600";
+          return;
+        }
+
+        messageArea.textContent = "Submitting report...";
+        messageArea.className =
+          "mt-3 text-sm text-center font-medium text-blue-600";
+        submitButton.disabled = true;
+        submitButton.innerHTML = `<span class="loading-ring mr-2"></span> Submitting...`;
+
+        try {
+          const photoBase64 = await fileToBase64(photoFile);
+
+          const reportData = {
+            content: reportContent,
+            category: category,
+            location: location,
+            submittedBy: currentUsername,
+            submittedByRole: currentRole,
+            submittedById: userId,
+            status: "New",
+            photoBase64: photoBase64,
+          };
+
+          // Replaced LocalDB with ApiClient
+          await ApiClient.addReport(reportData);
+
+          reportTextarea.value = "";
+          categorySelect.value = "";
+          locationSelect.value = "";
+          reportPhotoInput.value = "";
+          messageArea.textContent =
+            "Report successfully submitted to the global feed!";
+          messageArea.className =
+            "mt-3 text-sm text-center font-medium text-green-600";
+
+          // Manually trigger a refresh of reports list immediately
+          setupReportListener();
+        } catch (error) {
+          console.error("Error adding report:", error);
+          messageArea.textContent = `Error submitting report: ${error.message}`;
+          messageArea.className =
+            "mt-3 text-sm text-center font-medium text-red-600";
+        } finally {
+          submitButton.disabled = false;
+          submitButton.textContent = "Submit Fault Report";
+          setTimeout(() => {
+            messageArea.textContent = "";
+          }, 3000);
+        }
+      };
+
+      const populateDropdowns = () => {
+        ISSUE_CATEGORIES.forEach((category) => {
+          const option = document.createElement("option");
+          option.value = category;
+          option.textContent = category;
+          categorySelect.appendChild(option);
+        });
+
+        ISSUE_LOCATIONS.forEach((location) => {
+          const option = document.createElement("option");
+          option.value = location;
+          option.textContent = location;
+          locationSelect.appendChild(option);
+        });
+      };
+
+      window.onload = () => {
+        initApp();
+
+        homeGetStartedButton.addEventListener("click", () =>
+          switchView("registration")
+        );
+
+        submitButton.addEventListener("click", addReport);
+        startReportingButton.addEventListener("click", handleRegistration);
+        logoutButton.addEventListener("click", handleLogout);
+        resetDataButton.addEventListener("click", handleDataReset);
+
+        tabGlobal.addEventListener("click", () => setTab("global"));
+        tabMyReports.addEventListener("click", () => setTab("my"));
+
+        statTotalCard.addEventListener("click", handleStatClick);
+        statUnresolvedCard.addEventListener("click", handleStatClick);
+        statPendingCard.addEventListener("click", handleStatClick);
+        statOngoingCard.addEventListener("click", handleStatClick);
+        statResolvedCard.addEventListener("click", handleStatClick);
+
+        modalConfirmBtn.addEventListener("click", async () => {
+          if (pendingStatusChange.reportId) {
+            // Await the status update
+            await updateReportStatus(
+              pendingStatusChange.reportId,
+              pendingStatusChange.newStatus
+            );
+
+            confirmationModal.classList.add("hidden");
+            confirmationModal.classList.remove("flex");
+
+            pendingStatusChange = {
+              reportId: null,
+              newStatus: null,
+              oldStatus: null,
+              selectElement: null,
+            };
+          }
+        });
+
+        modalCancelBtn.addEventListener("click", () => {
+          if (pendingStatusChange.selectElement) {
+            pendingStatusChange.selectElement.value =
+              pendingStatusChange.oldStatus;
+          }
+
+          confirmationModal.classList.add("hidden");
+          confirmationModal.classList.remove("flex");
+
+          pendingStatusChange = {
+            reportId: null,
+            newStatus: null,
+            oldStatus: null,
+            selectElement: null,
+          };
+        });
+
+        reportsList.addEventListener("change", (event) => {
+          if (event.target.classList.contains("status-select")) {
+            const reportId = event.target.dataset.reportId;
+            const newStatus = event.target.value;
+
+            // Note: Since reports are fetched via polling, we don't have the current state easily.
+            // We temporarily store the old value in pendingStatusChange.
+            const oldStatus = event.target.dataset.oldStatus || "New"; // Stored in HTML data attribute (added below)
+
+            if (currentRole === "IT Staff" && newStatus === "Ongoing") {
+              event.target.value = oldStatus;
+
+              console.warn(
+                "IT Staff cannot set 'Ongoing' status. Please choose 'Pending' or 'Resolved'."
+              );
+              return;
+            }
+
+            if (reportId && currentRole === "IT Staff") {
+              pendingStatusChange = {
+                reportId: reportId,
+                newStatus: newStatus,
+                oldStatus: oldStatus,
+                selectElement: event.target,
+              };
+
+              modalMessage.textContent = `Are you sure you want to change report ID ${reportId} status to ${newStatus}?`;
+              confirmationModal.classList.remove("hidden");
+              confirmationModal.classList.add("flex");
+            }
+          }
+        });
+      };
+    </script>
+  </body>
+</html>
